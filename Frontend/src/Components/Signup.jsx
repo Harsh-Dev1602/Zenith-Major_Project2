@@ -1,10 +1,36 @@
 import React from 'react';
 import { Mail, Lock, User, ArrowRight, CheckCircle2, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useForm } from "react-hook-form"
 
 function Signup() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isSubmitSuccessful }
+  } = useForm();
+
+  const password = watch("pass");
+
+  React.useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
+
+  const onSubmit = async (data) => {
+    const userInfo = {
+      fullname: data.fullName,
+      email: data.email,
+      password: data.pass,
+    };
+    console.log(userInfo);
+  };
+
   return (
-    <div style={{height:"calc(100vh - 85px)"}} className=" w-full flex bg-zinc-50/50">
+    <div style={{ minHeight: "calc(100vh - 85px)" }} className=" w-full flex bg-zinc-50/50">
 
       {/* Right Side: Form (Primary Focus) */}
       <div className="w-full lg:w-3/5 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-20 bg-white shadow-2xl z-10">
@@ -15,7 +41,7 @@ function Signup() {
 
 
           {/* Signup Form */}
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit(onSubmit)}>
 
             {/* Full Name */}
             <div className="md:col-span-2 space-y-2">
@@ -24,10 +50,12 @@ function Signup() {
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                 <input
                   type="text"
-                  placeholder="Alex Rivera"
+                  placeholder="Harsh Dev"
+                  {...register("fullName", { required: true })}
                   className="w-full pl-12 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
                 />
               </div>
+              {errors.fullName && <span className=" text-red-500 font-semibold">Full name is required</span>}
             </div>
 
             {/* Email Address */}
@@ -37,10 +65,12 @@ function Signup() {
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                 <input
                   type="email"
-                  placeholder="name@company.com"
+                  placeholder="harsh@example.com"
+                  {...register("email", { required: true })}
                   className="w-full pl-12 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
                 />
               </div>
+              {errors.email && <span className=" text-red-500 font-semibold">Email is required</span>}
             </div>
 
             {/* Password */}
@@ -50,10 +80,12 @@ function Signup() {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                 <input
                   type="password"
+                  {...register("pass", { required: true })}
                   placeholder="••••••••"
                   className="w-full pl-12 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
                 />
               </div>
+              {errors.pass && <span className=" text-red-500 font-semibold">Password is required</span>}
             </div>
 
             {/* Confirm Password */}
@@ -64,9 +96,14 @@ function Signup() {
                 <input
                   type="password"
                   placeholder="••••••••"
+                  {...register("confirmPass", {
+                    required: true,
+                    validate: value => value === password || "The passwords do not match"
+                  })}
                   className="w-full pl-12 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
                 />
               </div>
+               {errors.confirmPass && <p className=" text-red-500 font-semibold">{errors.confirmPass.message || "Confirm is required" } </p>}
             </div>
 
             <button className="md:col-span-2 w-full py-4 bg-linear-to-r from-[#4facfe] to-[#00f2fe] text-white font-bold rounded-2xl shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 text-lg">

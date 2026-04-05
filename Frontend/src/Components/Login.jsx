@@ -1,10 +1,34 @@
 import React from 'react';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useForm } from "react-hook-form"
 
 function Login() {
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitSuccessful },
+    } = useForm();
+
+     const onSubmit = async (data) => {
+        const userInfo = {
+            email: data.email,
+            password: data.pass,
+        };
+        console.log(userInfo);
+
+    };
+
+    React.useEffect(() => {
+        if (isSubmitSuccessful) {
+            reset();
+        }
+    }, [isSubmitSuccessful, reset]);
+
     return (
-        <div style={{height:"calc(100vh - 81px)"}} className=" w-full flex bg-white">
+        <div style={{ minHeight:"calc(100vh - 81px)"}} className=" w-full flex bg-white">
 
             <div className="hidden lg:flex lg:w-1/2 bg-zinc-50 flex-col justify-center items-center p-12 relative overflow-hidden">
 
@@ -46,17 +70,19 @@ function Login() {
 
 
                     {/* Form */}
-                    <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+                    <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-zinc-700 ml-1">Email Address</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                                 <input
                                     type="email"
+                                    {...register("email", { required: true })}
                                     placeholder="harsh@example.com"
                                     className="w-full pl-12 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
                                 />
                             </div>
+                             {errors.email && <span className=" text-red-500 font-semibold">Email is required</span>}
                         </div>
 
                         <div className="space-y-2">
@@ -65,13 +91,15 @@ function Login() {
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                                 <input
                                     type="password"
+                                    {...register("pass", { required: true })}
                                     placeholder="••••••••"
                                     className="w-full pl-12 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
                                 />
                             </div>
+                             {errors.pass && <span className=" text-red-500 font-semibold">Password is required</span>}
                         </div>
 
-                        <button className="w-full py-4 bg-linear-to-r from-[#4facfe] to-[#00f2fe] text-white font-bold rounded-2xl shadow-lg shadow-cyan-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        <button className="w-full py-4 bg-linear-to-r from-[#4facfe] to-[#00f2fe] text-white font-bold rounded-2xl shadow-lg shadow-cyan-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2">
                             Log in
                             <ArrowRight size={20} />
                         </button>
