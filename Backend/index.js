@@ -12,7 +12,7 @@ App.use(express.json());
 App.use(cors());
 App.use(cookieParser());
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3002
 const URI = process.env.MONGODB_URI
 
 try {
@@ -22,6 +22,12 @@ try {
 } catch (error) {
   console.log(error);
 }
+
+App.get("/", (req, res) => {
+  res.send({
+    message: "Welcome to the Mental Health Tracker Back End REST API!",
+  });
+});
 
 App.use("/api/user",userRouter);
 

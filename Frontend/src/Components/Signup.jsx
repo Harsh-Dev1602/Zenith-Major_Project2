@@ -2,8 +2,13 @@ import React from 'react';
 import { Mail, Lock, User, ArrowRight, CheckCircle2, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useForm } from "react-hook-form"
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { useAuth } from '../Context/AuthProvider';
 
 function Signup() {
+
+  const [authUser, setAuthUser] = useAuth();
   const {
     register,
     handleSubmit,
@@ -26,7 +31,20 @@ function Signup() {
       email: data.email,
       password: data.pass,
     };
-    console.log(userInfo);
+
+    await axios.post("/api/user/register", userInfo)
+      .then((response) => {
+        if (response.data) {
+          toast.success("Register successfully..");
+        }
+        sessionStorage.setItem("Zenith_User", JSON.stringify(response.data));
+        setAuthUser(response.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          toast.error("Error: " + error.response.data.error);
+        }
+      });
   };
 
   return (
@@ -103,7 +121,7 @@ function Signup() {
                   className="w-full pl-12 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
                 />
               </div>
-               {errors.confirmPass && <p className=" text-red-500 font-semibold">{errors.confirmPass.message || "Confirm is required" } </p>}
+              {errors.confirmPass && <p className=" text-red-500 font-semibold">{errors.confirmPass.message || "Confirm is required"} </p>}
             </div>
 
             <button className="md:col-span-2 w-full py-4 bg-linear-to-r from-[#4facfe] to-[#00f2fe] text-white font-bold rounded-2xl shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 text-lg">
