@@ -1,6 +1,6 @@
 import React from 'react';
 import { Heart, Shield, Microscope, Users, Sparkles, ArrowRight } from 'lucide-react';
-import Logo from '../../public/Logo.png';
+import Banner from '../../public/Banner.png';
 
 function About() {
   return (
@@ -44,11 +44,10 @@ function About() {
             </div>
           </div>
         </div>
-        <div className="bg-zinc-50 rounded-[3rem] p-8 border border-zinc-100 shadow-inner">
-           {/* Placeholder for a symbolic image or a team photo */}
-           <div className="aspect-square bg-white rounded-[2rem] shadow-xl flex items-center justify-center p-12">
-              <img src={Logo} alt="Zenith" className="w-32 h-32 opacity-20 grayscale" />
-           </div>
+        <div className="bg-zinc-50 rounded-[3rem] border border-zinc-100 shadow-inner">
+           <div className="md:col-span-6 bg-white rounded-3xl shadow-2xl shadow-zinc-200/50 border border-zinc-100">
+            <img src={Banner} alt="Zenith" className="rounded-2xl w-full h-auto" />
+          </div>
         </div>
       </section>
 

@@ -3,8 +3,7 @@ import {
    Smile, Frown, PlusCircle, PenTool, BrainCircuit, ChevronRight, Check, 
   ShieldCheck, Zap, 
 } from 'lucide-react';
-import Banner from '../../public/Banner.png'; 
-import Logo from '../../public/Logo.png'
+import Banner from '../../public/Banner.png';
 
 const moods = [
   { name: 'Radiant', icon: Smile, color: 'text-emerald-500', bg: 'bg-emerald-50' },

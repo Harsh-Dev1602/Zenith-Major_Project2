@@ -1,6 +1,6 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Toaster from "react-hot-toast"
+import { Routes, Route, Navigate } from 'react-router-dom'
+import{ Toaster } from "react-hot-toast"
 
 import Navbar from './Components/Navbar'
 import Home from './Components/Home'
@@ -10,21 +10,25 @@ import About from './Components/About'
 import Footer from './Components/Footer'
 import Dashboard from './Components/Dashboard'
 import NewEntry from './Components/NewEntry'
+import { useAuth } from './Context/AuthProvider';
 
 function App() {
+  const [authUser, setAuthUser] = useAuth();
   return (
     <>
       <div className=" leading-normal">
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={authUser ? < Navigate to="/dashboard"/> : <Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/login" element={authUser ? < Navigate to="/dashboard"/> : <Login />} />
+          <Route path="/signup" element={authUser ? < Navigate to="/dashboard"/> : <Signup />} />
+          <Route path="/dashboard" element={ authUser ? <Dashboard/> : <Navigate to="/"/>}/>
           <Route path="/new-entry" element={<NewEntry/>}/>
         </Routes>
+        <div className={`${authUser ? " hidden" : " "}`}>
         <Footer />
+        </div>
       </div>
       <Toaster
         position="bottom-center"
