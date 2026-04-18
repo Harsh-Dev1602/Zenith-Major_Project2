@@ -1,6 +1,6 @@
 import express from 'express';
 import { register , login , logout,  } from "../controllers/user.controller.js";
-import { createEntry } from '../controllers/createEntry.controller.js';
+import { createEntry, getEntry } from '../controllers/createEntry.controller.js';
 
 
 const router = express.Router();
@@ -10,7 +10,8 @@ router.post("/login", login)
 router.post("/logout", logout)
 
 
-router.post("/journal", createEntry);
+router.post("/journal/:userId", createEntry);
+router.get("/all-journal/:userId", getEntry );
 
 
 export default router;

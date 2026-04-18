@@ -12,7 +12,9 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.15.0",
+    "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
+    "jspdf": "^4.2.1",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

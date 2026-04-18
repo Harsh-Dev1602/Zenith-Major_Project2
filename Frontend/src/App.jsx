@@ -23,8 +23,9 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={authUser ? < Navigate to="/dashboard"/> : <Login />} />
           <Route path="/signup" element={authUser ? < Navigate to="/dashboard"/> : <Signup />} />
-          <Route path="/dashboard" element={ authUser ? <Dashboard/> : <Navigate to="/"/>}/>
-          <Route path="/new-entry" element={<NewEntry/>}/>
+          <Route path="/dashboard" element={  authUser ? <Dashboard/> : <Navigate to="/"/> }/>
+          <Route path="/new-entry" element={ authUser ? <NewEntry/> : <Navigate to="/"/>}/>
+
         </Routes>
         <div className={`${authUser ? " hidden" : " "}`}>
         <Footer />
@@ -40,7 +41,6 @@ function App() {
             fontWeight: "700",
             borderRadius: "12px",
             color: "#145da0",
-            border: "solid 2px #145da0",
             backgroundColor: "white"
           },
           iconTheme: {
