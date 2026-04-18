@@ -115,7 +115,7 @@ function NewEntry() {
               <Lightbulb size={18} />
               <h2 className="text-sm font-black uppercase tracking-widest">Writing Prompts</h2>
             </div>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex gap-3 overflow-x-auto pb-2 Hide">
               {SUGGESTIONS.map((sug, index) => (
                 <button
                   key={index}

@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.Hide::-webkit-scrollbar{
+    background-color: white;
+}
