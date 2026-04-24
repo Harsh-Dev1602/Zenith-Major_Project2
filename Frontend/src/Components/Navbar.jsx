@@ -9,6 +9,10 @@ import toast from 'react-hot-toast';
 function Navbar() {
   const [authUser, setAuthUser] = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+   const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
@@ -29,7 +33,7 @@ function Navbar() {
       <div className="w-full mx-auto px-6 h-20 flex items-center justify-between">
 
         {/* Logo Section */}
-        <Link to="/" className="flex items-center gap-3 cursor-pointer group">
+        <Link onClick={scrollTop} to="/" className="flex items-center gap-3 cursor-pointer group">
           <img
             src={Logo}
             alt="ZENITH Logo"
@@ -66,14 +70,14 @@ function Navbar() {
 
                 {/* User Info Header */}
                 <div className="p-4 bg-slate-50/50 border-b border-slate-50">
-                  <h3 className="font-black text-slate-900 text-sm truncate">
+                  <h3 className="font-black text-slate-900 text-md ">
                     {authUser?.user?.fullname}
                   </h3>
                   <h3 className=" text-slate-400 text-sm">
                     {authUser?.user?.email}
                   </h3>
-                  <p className="text-[11px] font-bold text-indigo-500 uppercase tracking-widest mt-1">
-                    {authUser?.user?.role == "@dmin"? "Admin" : " "}
+                  <p className="text-[11px] font-bold text-indigo-500 uppercase tracking-widest ">
+                    {authUser?.user?.role == "@dmin"? "Admin" : ""}
                   </p>
                 </div>
 
@@ -95,10 +99,10 @@ function Navbar() {
 
 
         <div className={`${authUser ? "hidden " : " "} flex items-center gap-4`}>
-          <Link to="/login" className="px-6 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-all border border-slate-200 rounded-full hover:bg-slate-50">
+          <Link onClick={scrollTop} to="/login" className="px-6 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-all border border-slate-200 rounded-full hover:bg-slate-50">
             Log in
           </Link>
-          <Link to="/signup" className="px-6 py-2 text-sm font-semibold text-white bg-linear-to-r from-[#4facfe] to-[#00f2fe] rounded-full shadow-lg shadow-cyan-500/30 hover:scale-105 transition-transform active:scale-95">
+          <Link onClick={scrollTop} to="/signup" className="px-6 py-2 text-sm font-semibold text-white bg-linear-to-r from-[#4facfe] to-[#00f2fe] rounded-full shadow-lg shadow-cyan-500/30 hover:scale-105 transition-transform active:scale-95">
             Sign up
           </Link>
         </div>

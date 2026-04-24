@@ -17,7 +17,7 @@ function Dashboard() {
 
   useEffect(() => {
     const fetchJournal = async () => {
-      const userId = authUser?.user?._id || authUser?.user?.id;
+      const userId = authUser?.user?.id;
       if (!userId) { setLoading(false); return; }
       try {
         const response = await axios.get(`/api/user/all-journal/${userId}`);
@@ -35,139 +35,138 @@ function Dashboard() {
 
   const generatePDFReport = () => {
     const doc = new jsPDF();
-    const name = authUser?.user?.fullname;
-    const userEmail = authUser?.user?.email;
+    const name = authUser?.user?.fullname || "User";
+    const userEmail = authUser?.user?.email || "N/A";
     const date = new Date().toLocaleDateString();
 
-    // --- BRAND COLORS ---
-    const gradStart = [72, 198, 239];  // #48c6ef
-    const gradEnd = [111, 134, 214];    // #6f86d6
-    const black = [9, 9, 11];
+    // RGB for #4facfe (Start) and #00f2fe (End)
+    const colorStart = [79, 172, 254];
+    const colorEnd = [0, 242, 254];
+    const navyColor = [68, 68, 132]; // #444484
     const white = [255, 255, 255];
-    const zinc400 = [161, 161, 170];
+    const black = [9, 9, 11];
 
-    // --- 1. CLEAN WHITE HEADER ---
-    doc.setFillColor(...white);
-    doc.rect(0, 0, 210, 45, 'F');
+    // Helper: Function to draw page ornaments (Header, Footer, Seal)
+    const drawPageDecorations = (pageDoc) => {
+      const width = 210;
 
-    // Bottom Border of Header
-    doc.setDrawColor(228, 228, 231);
-    doc.line(0, 45, 210, 45);
+      // 1. TOP LINEAR GRADIENT BAR (Simulated)
+      for (let i = 0; i < width; i++) {
+        const r = colorStart[0] + (colorEnd[0] - colorStart[0]) * (i / width);
+        const g = colorStart[1] + (colorEnd[1] - colorStart[1]) * (i / width);
+        const b = colorStart[2] + (colorEnd[2] - colorStart[2]) * (i / width);
+        pageDoc.setFillColor(r, g, b);
+        pageDoc.rect(i, 0, 1, 3, 'F');
+      }
 
-    try {
-      doc.addImage(logoBase64, 'PNG', 15, 10, 25, 25);
-    } catch (e) {
-      doc.setTextColor(...black);
-      doc.setFontSize(22);
-      doc.setFont("helvetica", "bold");
-      doc.text("ZENITH AI", 45, 26);
-    }
+      // 2. BOTTOM LINEAR GRADIENT BAR (Sile Bottom)
+      for (let i = 0; i < width; i++) {
+        const r = colorStart[0] + (colorEnd[0] - colorStart[0]) * (i / width);
+        const g = colorStart[1] + (colorEnd[1] - colorStart[1]) * (i / width);
+        const b = colorStart[2] + (colorEnd[2] - colorStart[2]) * (i / width);
+        pageDoc.setFillColor(r, g, b);
+        pageDoc.rect(i, 287, 1, 10, 'F');
+      }
+      pageDoc.setTextColor(...black);
+      pageDoc.setFontSize(7);
+      pageDoc.text("ZENITH | DIGITAL HEALTH CERTIFICATION", 105, 293.5, { align: "center" });
 
+      // 3. LOGO & TEXT GRADIENT (Simulated for "ZENITH")
+      try {
+        pageDoc.addImage(logoBase64, 'PNG', 15, 10, 25, 25);
+      } catch (e) { }
 
-    doc.setTextColor(...black);
-    doc.setFontSize(8);
-    doc.setFont("helvetica", "bold");
-    doc.text("ZENITH ", 195, 15, { align: "right" });
-    doc.setFont(undefined, "normal");
-    doc.setTextColor(...zinc400);
-    doc.text("Bypass Road, Square, Manglaya Sadak,", 195, 20, { align: "right" });
-    doc.text("Indore, Madhya Pradesh 453771", 195, 24, { align: "right" });
-    doc.setTextColor(...gradEnd);
-    doc.text("contact@zenith.in", 195, 28, { align: "right" });
+      // ZENITH Text Color Gradient Simulation
+      const textX = 45;
+      const chars = "ZENITH";
+      pageDoc.setFont("helvetica", "bold");
+      pageDoc.setFontSize(22);
+      for (let i = 0; i < chars.length; i++) {
+        const r = colorStart[0] + (colorEnd[0] - colorStart[0]) * (i / chars.length);
+        const g = colorStart[1] + (colorEnd[1] - colorStart[1]) * (i / chars.length);
+        const b = colorStart[2] + (colorEnd[2] - colorStart[2]) * (i / chars.length);
+        pageDoc.setTextColor(r, g, b);
+        pageDoc.text(chars[i], textX + (i * 9), 26);
+      }
 
-    // --- 2. REPORT METADATA ---
+      // 4. ADDRESS (Top Right)
+      pageDoc.setTextColor(...black);
+      pageDoc.setFontSize(8);
+      pageDoc.text("ZENITH AI SYSTEMS", 195, 15, { align: "right" });
+      pageDoc.setFont(undefined, "normal");
+      pageDoc.text("Bypass Road, Square, Manglaya Sadak,", 195, 20, { align: "right" });
+      pageDoc.text("Indore, Madhya Pradesh 453771", 195, 24, { align: "right" });
+      pageDoc.setTextColor(...colorStart);
+      pageDoc.text("contact@zenith.in", 195, 28, { align: "right" });
+
+      // Bottom Border of Header
+      pageDoc.setDrawColor(228, 228, 231);
+      pageDoc.line(0, 45, 210, 45);
+
+      // 5. VERIFIED SEAL (On every page)
+      const sealY = 270;
+      pageDoc.setDrawColor(...navyColor);
+      pageDoc.setLineWidth(0.8);
+      pageDoc.circle(30, sealY - 10, 10, 'S');
+      pageDoc.setFontSize(7);
+      pageDoc.setTextColor(...navyColor);
+      pageDoc.setFont(undefined, "bold");
+      pageDoc.text("VERIFIED", 30, sealY - 11, { align: "center" });
+      pageDoc.setFontSize(6);
+      pageDoc.text("ZENITH ADMIN", 30, sealY - 7, { align: "center" });
+    };
+
+    // Initialize Page 1
+    drawPageDecorations(doc);
+
+    // --- REPORT METADATA ---
     doc.setTextColor(...black);
     doc.setFontSize(10);
     doc.setFont(undefined, "bold");
-    doc.text("USER", 20, 60);
-
+    doc.text("USER REPORT", 20, 60);
     doc.setFontSize(9);
     doc.setFont(undefined, "normal");
     doc.setTextColor(82, 82, 91);
     doc.text(`Name: ${name}`, 20, 67);
     doc.text(`Email: ${userEmail}`, 20, 72);
-    doc.text(`Report Date: ${date}`, 20, 77);
+    doc.text(`Date: ${date}`, 20, 77);
 
-    // --- 3. DATA TABLE (With Padding & Proper Formatting) ---
+    // --- DATA TABLE ---
     let y = 100;
     const tableX = 15;
     const tableWidth = 180;
 
-    // Table Header Background
-    doc.setFillColor(...gradStart);
+    doc.setFillColor(...colorStart);
     doc.rect(tableX, 90, tableWidth, 10, 'F');
-
     doc.setTextColor(...white);
-    doc.setFontSize(9);
     doc.setFont(undefined, "bold");
-    // Padding-aware column placement
     doc.text("TIMESTAMP", tableX + 5, 96.5);
     doc.text("MOOD", tableX + 45, 96.5);
     doc.text("SCORE", tableX + 75, 96.5);
-    doc.text("REFLECTIONS & INSIGHTS", tableX + 100, 96.5);
+    doc.text("REFLECTIONS", tableX + 100, 96.5);
 
-    // Table Content
     journalData.slice(-15).reverse().forEach((entry) => {
-      // Dynamic Height Calculation for Padding
       const reflectionText = entry.text || "No reflection recorded.";
       const splitText = doc.splitTextToSize(reflectionText, 75);
-      const rowPadding = 8;
-      const rowHeight = (splitText.length * 5) + rowPadding;
+      const rowHeight = (splitText.length * 5) + 8;
 
-      // Page Break Logic
       if (y + rowHeight > 260) {
         doc.addPage();
-        y = 30;
+        drawPageDecorations(doc); // Apply gradient header/footer/seal to new page
+        y = 50; // Start below the header
       }
 
       doc.setTextColor(63, 63, 70);
       doc.setFont(undefined, "normal");
-
-      // Render Row Data with Vertical Centering logic
       doc.text(new Date(entry.createdAt).toLocaleDateString(), tableX + 5, y + 5);
       doc.text(entry.mood || "Neutral", tableX + 45, y + 5);
       doc.text(`${entry.moodScore}/10`, tableX + 75, y + 5);
       doc.text(splitText, tableX + 100, y + 5);
 
-      // Row Separator
       doc.setDrawColor(244, 244, 245);
       doc.line(tableX, y + rowHeight - 2, tableX + tableWidth, y + rowHeight - 2);
-
       y += rowHeight;
     });
-
-    // --- 4. SIGNATURE & VERIFICATION AREA ---
-    const signY = 270;
-
-    // --- UPDATED VERIFICATION SEAL (Color: #444484) ---
-    const navyColor = [68, 68, 132]; // RGB for #444484
-
-    doc.setDrawColor(...navyColor);
-    doc.setLineWidth(0.8); // Slightly thicker for a premium feel
-    doc.circle(30, signY - 10, 10, 'S'); // Increased radius to 10 for better text fit
-
-    doc.setFontSize(7); // Adjusted for better fit
-    doc.setTextColor(...navyColor);
-    doc.setFont(undefined, "bold");
-
-    // Positioned to look like a official rubber stamp
-    doc.text("VERIFIED", 30, signY - 11, { align: "center" });
-    doc.setFontSize(6);
-    doc.text("ZENITH ADMIN", 30, signY - 7, { align: "center" });
-
-    // Reset Font for the rest of the document
-    doc.setFont(undefined, "normal");
-
-    // --- 5. GRADIENT FOOTER (SILE BOTTOM) ---
-    doc.setFillColor(...gradStart);
-    doc.rect(0, 287, 105, 10, 'F');
-    doc.setFillColor(...gradEnd);
-    doc.rect(105, 287, 105, 10, 'F');
-
-    doc.setTextColor(...black);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7);
-    doc.text("ZENITH  | DIGITAL HEALTH CERTIFICATION  ", 105, 293.5, { align: "center" });
 
     doc.save(`Zenith_Report_${name}.pdf`);
   };
@@ -192,22 +191,22 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-zinc-50/50 pb-20 font-sans">
-      <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-10">
+      <main className=" container mx-auto p-4 md:p-8 space-y-10">
 
         {/* DASHBOARD HEADER */}
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-8">
           <div className="space-y-2">
-            <h1 className="text-5xl font-black text-zinc-950 tracking-tighter">
-              Mindset <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4facfe] to-[#00f2fe]">Zenith.</span>
+            <h1 className="text-xl md:text-4xl font-black text-zinc-950 tracking-tighter">
+              Welcome, <span className="text-transparent bg-clip-text bg-linear-to-r from-[#4facfe] to-[#00f2fe]"> {authUser?.user?.fullname}</span>
             </h1>
-            <p className="text-zinc-500 font-medium">Welcome, {authUser?.user?.fullname}. Resilience: <span className="text-zinc-900 font-bold">{averageMood}/10</span></p>
+            <p className="text-zinc-500 font-medium"> Resilience: <span className="text-zinc-900 font-bold">{averageMood}/10</span></p>
           </div>
-          <div className="flex gap-3">
-            <button onClick={generatePDFReport} className="flex items-center gap-2 px-6 py-4 bg-white border border-zinc-200 text-zinc-700 font-bold rounded-2xl hover:bg-zinc-50 transition-all">
-              <FileText size={18} /> Download Report
+          <div className="flex flex-col sm:flex-row  gap-4">
+            <button onClick={generatePDFReport} className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 cursor-pointer text-zinc-700 font-bold rounded-2xl hover:bg-zinc-50 transition-all">
+              <FileText size={20} /> Download Report
             </button>
-            <Link to="/new-entry" className="flex items-center gap-2 px-8 py-4 bg-zinc-950 text-white font-bold rounded-2xl shadow-xl hover:bg-zinc-800 transition-all">
-              <Plus size={20} className="text-cyan-400" /> New Entry
+            <Link to="/new-entry" className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-[#4facfe] to-[#00f2fe] text-white font-bold rounded-2xl shadow-xl hover:bg-zinc-800 transition-all">
+              <Plus size={20} /> New Entry
             </Link>
           </div>
         </header>
@@ -219,7 +218,7 @@ function Dashboard() {
               <div className="p-2 bg-zinc-950 rounded-lg text-cyan-400"><TrendingUp size={18} /></div>
               Weekly Flow
             </h3>
-            <div className="h-80 w-full">
+            <div className="h-80 w-full ">
               <ResponsiveContainer>
                 <AreaChart data={chartData}>
                   <defs>
@@ -244,14 +243,14 @@ function Dashboard() {
           </div>
 
           {/* LIST */}
-          <div className="lg:col-span-12 bg-white rounded-[3rem] border border-zinc-200 shadow-sm overflow-hidden">
-            <div className="p-10 border-b border-zinc-100 flex items-center justify-between">
-              <h3 className="font-black text-zinc-950 text-2xl">Reflections Archive</h3>
+          <div className="lg:col-span-12 bg-white rounded-[3rem] border-zinc-200 shadow-sm ">
+            <div className="p-5 border-b border-zinc-100 flex items-center justify-between">
+              <h3 className="font-bold text-transparent bg-clip-text bg-linear-to-r from-[#4facfe] to-[#00f2fe] text-2xl">Reflections Archive</h3>
               <button onClick={() => setViewAll(!viewAll)} className="text-xs font-black text-cyan-600 uppercase tracking-widest bg-cyan-50 px-4 py-2 rounded-full">
                 {viewAll ? 'Collapse' : 'View All'}
               </button>
             </div>
-            <div className="divide-y divide-zinc-100">
+            <div className="divide-y overflow-auto Hide divide-zinc-100">
               {displayEntries.map((entry) => (
                 <EntryItem
                   key={entry._id}
@@ -284,7 +283,7 @@ const CustomTooltip = ({ active, payload }) => {
 
 function EntryItem({ date, time, mood, score, excerpt }) {
   return (
-    <div className="group flex items-center justify-between p-8 hover:bg-zinc-50 transition-all">
+    <div className="group flex items-center justify-between px-10 py-5 hover:bg-zinc-50 transition-all">
       <div className="flex items-center gap-10">
         <div className="w-24 shrink-0 text-left">
           <p className="text-[10px] font-black text-zinc-400 uppercase mb-1">{date}</p>
@@ -298,7 +297,6 @@ function EntryItem({ date, time, mood, score, excerpt }) {
           <p className="text-zinc-500 text-sm truncate font-medium italic group-hover:text-zinc-800 transition-colors">"{excerpt}"</p>
         </div>
       </div>
-      <ChevronRight size={20} className="text-zinc-300 group-hover:text-zinc-950 transition-colors" />
     </div>
   );
 }
@@ -309,7 +307,7 @@ function RecommendationCard({ icon, title, desc, color }) {
     dark: "bg-white border-zinc-200 text-zinc-900"
   };
   return (
-    <div className={`p-6 rounded-[2rem] border flex items-center gap-5 transition-all hover:shadow-lg hover:border-cyan-200 group`}>
+    <div className={`p-5 rounded-2xl border border-gray-200 flex items-center gap-5 transition-all hover:shadow-lg hover:border-cyan-200 group`}>
       <div className={`size-14 rounded-2xl bg-zinc-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform ${themes[color]}`}>
         {icon}
       </div>

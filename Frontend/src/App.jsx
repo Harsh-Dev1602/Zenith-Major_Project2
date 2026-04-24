@@ -10,6 +10,7 @@ import About from './Components/About'
 import Footer from './Components/Footer'
 import Dashboard from './Components/Dashboard'
 import NewEntry from './Components/NewEntry'
+import AdminDashboard from './Admin/AdminDashboard'
 import { useAuth } from './Context/AuthProvider';
 
 function App() {
@@ -23,9 +24,9 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={authUser ? < Navigate to="/dashboard"/> : <Login />} />
           <Route path="/signup" element={authUser ? < Navigate to="/dashboard"/> : <Signup />} />
-          <Route path="/dashboard" element={  authUser ? <Dashboard/> : <Navigate to="/"/> }/>
+          <Route path="/dashboard" element={  authUser ?(authUser?.user?.role === "@dmin" ? <Navigate to="/admin/dashboard"/>  : <Dashboard/> ) : <Navigate to="/login"/> }/>
           <Route path="/new-entry" element={ authUser ? <NewEntry/> : <Navigate to="/"/>}/>
-
+          <Route path="/admin/dashboard" element={authUser?.user?.role === "@dmin" ? <AdminDashboard/>  : <Navigate to="/login"/>}/>
         </Routes>
         <div className={`${authUser ? " hidden" : " "}`}>
         <Footer />

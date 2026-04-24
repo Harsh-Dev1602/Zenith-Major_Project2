@@ -8,11 +8,11 @@ import toast from "react-hot-toast";
 
 const SUGGESTIONS = [
   "I feel radiant and great today because...",
-  "I feel calm and at peace right now...",   
-  "Today is okay, I feel quite neutral...",  
-  "I'm feeling a bit anxious and worried...", 
-  "I feel sad and a little lonely because...", 
-  "I'm feeling angry and mad about..."      
+  "I feel calm and at peace right now...",
+  "Today is okay, I feel quite neutral...",
+  "I'm feeling a bit anxious and worried...",
+  "I feel sad and a little lonely because...",
+  "I'm feeling angry and mad about..."
 ];
 
 function NewEntry() {
@@ -40,7 +40,7 @@ function NewEntry() {
 
   const onSubmit = async (data) => {
     setIsAnalyzing(true);
-    const userId = authUser?.user?.id ;
+    const userId = authUser?.user?.id;
 
     try {
       const response = await axios.post(`/api/user/journal/${userId}`, { text: data.text });
@@ -57,20 +57,20 @@ function NewEntry() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] font-sans text-slate-900 pb-20">
+    <div style={{ minHeight: "calc(100vh - 80.5px)" }} className=" container mx-auto bg-[#FDFDFD] font-sans text-slate-900 ">
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Navigation Bar */}
-        <nav className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4">
-          <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <nav className="container mx-auto px-5 sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-100 py-4">
+          <div className=" flex items-center justify-between">
             <Link to="/dashboard" className="flex items-center gap-2 text-slate-400 hover:text-slate-900 font-bold transition-all group">
               <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-              <span>Dashboard</span>
+              <span className=" hidden md:block">Dashboard</span>
             </Link>
 
             <button
               type="submit"
               disabled={isAnalyzing}
-              className="flex items-center gap-2 px-8 py-3 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-[#4facfe] to-[#00f2fe] text-white font-black rounded-2xl cursor-pointer shadow-xl shadow-indigo-200 transition-all disabled:opacity-50"
             >
               {isAnalyzing ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
               {isAnalyzing ? 'Analyzing...' : 'Save Entry'}
@@ -79,8 +79,6 @@ function NewEntry() {
         </nav>
 
         <main className="max-w-4xl mx-auto px-6 py-10 space-y-5">
-        
-
           <div className="bg-white rounded-[3rem] border border-slate-200/60 shadow-sm overflow-hidden">
             <div className="p-5 border-b border-slate-50 bg-slate-50/30">
               <h1 className="text-2xl font-black text-slate-900 tracking-tight">New Entry</h1>
@@ -93,9 +91,8 @@ function NewEntry() {
             </div>
 
             <div className="p-5">
-              {/* AI Analysis Result */}
               {result && (
-                <div className="mb-8 p-6 bg-indigo-50 border border-indigo-100 rounded-[2rem] flex items-center justify-between animate-in fade-in slide-in-from-top duration-500">
+                <div className=" p-6 bg-indigo-50 border border-indigo-100 rounded-4xl flex items-center justify-between animate-in fade-in slide-in-from-top duration-500">
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-white rounded-xl shadow-sm"><CheckCircle className="text-indigo-600" size={24} /></div>
                     <div>
@@ -110,31 +107,31 @@ function NewEntry() {
                 </div>
               )}
 
-               <section className="space-y-4">
-            <div className="flex items-center gap-2 text-indigo-600">
-              <Lightbulb size={18} />
-              <h2 className="text-sm font-black uppercase tracking-widest">Writing Prompts</h2>
-            </div>
-            <div className="flex gap-3 overflow-x-auto pb-2 Hide">
-              {SUGGESTIONS.map((sug, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => handleSuggestion(sug)}
-                  className="whitespace-nowrap px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-indigo-400 hover:text-indigo-600 transition-all shadow-sm active:scale-95"
-                >
-                  {sug}
-                </button>
-              ))}
-            </div>
-          </section>
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 text-indigo-600">
+                  <Lightbulb size={18} />
+                  <h2 className="text-sm font-black uppercase tracking-widest">Writing Prompts</h2>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-2 Hide">
+                  {SUGGESTIONS.map((sug, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleSuggestion(sug)}
+                      className="whitespace-nowrap px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-indigo-400 hover:text-indigo-600 transition-all shadow-sm active:scale-95"
+                    >
+                      {sug}
+                    </button>
+                  ))}
+                </div>
+              </section>
 
               <textarea
                 placeholder="Start writing your thoughts..."
-                className="w-full min-h-20 max-h-20 text-xl text-slate-700 placeholder-slate-200 border-none focus:ring-0  resize-none leading-relaxed bg-transparent"
+                className="w-full min-h-20 max-h-20 text-xl text-slate-700 placeholder-slate-200 border-none outline-none focus:ring-0  resize-none leading-relaxed bg-transparent"
                 {...register("text", { required: "Please write something to analyze." })}
               />
-              
+
               {errors.text && (
                 <p className="text-red-500 text-xs font-bold mt-2">
                   {errors.text.message}
