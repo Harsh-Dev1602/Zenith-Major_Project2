@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import seedAdmin from "./controllers/admin.controller.js";
 import userRouter from "./routes/user.route.js"
+import path from "path";
 
 dotenv.config();
 const App = express();
@@ -23,14 +24,15 @@ try {
   console.log(error);
 }
 
-App.get("/", (req, res) => {
-  res.send({
-    message: "Welcome to the Mental Health Tracker Back End REST API!",
-  });
-});
-
 App.use("/api/user",userRouter);
 
+if (process.env.NODE_ENV === 'production') {
+    const dirPath = path.resolve();
+    App.use(express.static("./Frontend/dist"));
+    App.get(/.*/, (req, res) => {
+        res.sendFile(path.resolve(dirPath,'./Frontend/dist','index.html'));
+    });
+}
 
 App.listen(port,()=>{
     console.log(`Web backend run on this port http://localhost:${port}`)
