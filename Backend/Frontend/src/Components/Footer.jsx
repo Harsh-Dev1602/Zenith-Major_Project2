@@ -9,7 +9,7 @@ function Footer() {
   return (
     <footer className="bg-zinc-950 text-zinc-400 py-16 px-6 border-t border-zinc-800 font-sans">
       <div className=" container mx-auto">
-        <div className="flex justify-between items-center mb-16">
+        <div className="flex flex-col gap-5 sm:flex-row justify-between items-center mb-16">
           
           {/* Brand Column */}
           <div className="space-y-6">

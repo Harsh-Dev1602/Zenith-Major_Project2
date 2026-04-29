@@ -40,17 +40,36 @@ function NewEntry() {
 
   const onSubmit = async (data) => {
     setIsAnalyzing(true);
-    const userId = authUser?.user?.id;
+    const userId = authUser?.user?._id || authUser?.user?.id;
 
     try {
-      const response = await axios.post(`/api/user/journal/${userId}`, { text: data.text });
-      if (response.data) {
-        toast.success("Entry saved!");
-        setResult(response.data.entry);
-        reset();
+      
+      const postResponse = await axios.post(`/api/user/journal/${userId}`, { text: data.text });
+
+      if (postResponse.data) {
+        const allJournalResponse = await axios.get(`/api/user/all-journal/${userId}`);
+
+        const allJournals = allJournalResponse.data.journal || allJournalResponse.data;
+
+        const today = new Date().toISOString().split('T')[0];
+
+        const todayEntry = allJournals.find(entry => {
+          const entryDate = new Date(entry.createdAt).toISOString().split('T')[0];
+          return entryDate === today;
+        });
+
+        if (todayEntry) {
+          setResult(todayEntry); 
+          toast.success("Today's analysis loaded!");
+        } else {
+          setResult(postResponse.data.entry);
+        }
+
+        reset(); 
       }
     } catch (error) {
-      toast.error("Failed to save entry");
+      console.error("Error:", error);
+      toast.error("Failed to fetch or save today's data");
     } finally {
       setIsAnalyzing(false);
     }
